@@ -34,11 +34,21 @@ function cargarPub(idPub)
 
             // PREGUNTA 3 - AGREGAR LAS RESPUESTAS A LOS COMENTARIOS
             /*AGREGANDO RESPUESTAS DE COMENTARIOS */
-            
+
             // ITERAR EN EL ATRIBUTO comenInfo.respuestas
             // CREAR EL BLOQUE HTML CON LA INFORMACION DE LA RESPUESTA
             // ANEXAR ESE BLOQUE AL OBJETO bloqueComentario
 
+            if ((comenInfo.respuestas) && (comenInfo.respuestas.length > 0)) {
+                for (resp of comenInfo.respuestas) {
+                    bloqueComentario += `
+                        <div class='bg-white mb-2 p-2 ms-4'>
+                            <strong>${resp.autor}</strong><br>
+                            <ps>${resp.descripcion}</p>
+                        </div>
+                    `;
+                }
+            }            
 
             /* FIN DE RESPUESTAS DE COMENTARIOS */
 
