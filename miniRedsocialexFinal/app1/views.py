@@ -143,6 +143,18 @@ def devolverPublicacion(request):
             ITERA EN TODAS LAS RESPUESTAS PARA PODER ANEXAR LA INFORMACION EN LA LISTA lista_respuestas
             LOS DATOS A ANEXAR SON EL AUTOR, LA DESCRIPCION O CONTENIDO, EL ID DE LA RESPUESTA Y LA FECHA
             """
+
+            # Cargar respuestas del comentario padre
+            respuestas = comentario.objects.filter(respuesta_a=comentarioInfo).order_by('fecha_creacion')
+
+            for resp in respuestas:
+                lista_respuestas.append({
+                    'autor': f"{resp.autoCom.first_name} {resp.autoCom.last_name}",
+                    'descripcion': resp.descripcion,
+                    'id': resp.id,
+                    'fecha': resp.fecha_creacion.strftime("%d/%m/%Y %H:%M")
+                })
+
             
             # FIN SECCION DE AGREGAR LAS RESPUESTAS
 
@@ -269,21 +281,21 @@ def publicarRespuestaComentario(request):
         CREAR EL NUEVO OBJETO COMENTARIO CON EL ATRIBUTO RESPUESTA_A CONFIGURADO ADECUADAMENTE
         """
 
-        # datosComentario = json.loads(request.body.decode('utf-8'))
+        datosComentario = json.loads(request.body.decode('utf-8'))
 
-        # comentarioTexto = datosComentario.get('comentario')
-        # idPublicacion = datosComentario.get('idPublicacion')
-        # idComentarioPadre = datosComentario.get('idComentario')
+        comentarioTexto = datosComentario.get('comentario')
+        idPublicacion = datosComentario.get('idPublicacion')
+        idComentarioPadre = datosComentario.get('idComentario')
 
-        # objPublicacion = publicacion.objects.get(id=idPublicacion)
-        # objComentarioPadre = comentario.objects.get(id=idComentarioPadre)
+        objPublicacion = publicacion.objects.get(id=idPublicacion)
+        objComentarioPadre = comentario.objects.get(id=idComentarioPadre)
 
-        # comentario.objects.create(
-        #     descripcion=comentarioTexto,
-        #     pubRel = objPublicacion,
-        #     autoCom = request.user,
-        #     respuesta_a = objComentarioPadre
-        # )
+        comentario.objects.create(
+            descripcion=comentarioTexto,
+            pubRel = objPublicacion,
+            autoCom = request.user,
+            respuesta_a = objComentarioPadre
+        )
 
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'error': 'Petición inválida'}, status=400)
