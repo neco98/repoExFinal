@@ -119,6 +119,14 @@ function mostrarFormularioRespuesta(idComentario, idPublicacion) {
     // TENER EN CUENTA QUE PARA CAPTURAR EL TEXTO DEL COMENTARIO EL ESPACIO DE TEXTO CREADO DEBE TENER UN ID: "respuesta-${idComentario}"
     // EL BOTON A IMPLEMENTAR DEBE TENER ANEXADO COMO EVENTO ONCLICK LA FUNCION enviarRespuesta(<id del comentario>,<id de la publicacion>)
     const formHTML = `
+        <div class="form-respuesta mt-2">
+            <textarea id="respuesta-${idComentario}" class="form-control mb-2" rows="2" placeholder="Escribe tu respuesta..."></textarea>
+            <div class="text-end">
+                <button class="btn btn-sm btn-primary" onclick="enviarRespuesta(${idComentario}, ${idPublicacion})">
+                    <i class="fa-solid fa-reply"></i> Responder
+                </button>
+            </div>
+        </div>
     `;
 
     // SE INSERTA EL FORMULARIO CREADO POR EL USUARIO
@@ -130,14 +138,37 @@ function enviarRespuesta(idComentario, idPublicacion) {
     // PREGUNTA 1 - FUNCION ENVIAR RESPUESTA HACIA EL BACKEND
 
     // CAPTURAR EL OBJETO DEL FORMULARIO CREADO PREVIAMENTE EN DONDE SE ESCRIBE LA RESPUESTA AL COMENTARIO
-
-    // VALIDAR QUE EL TEXTO CONTENGA CARACTERES VALIDOS USANDO LA FUNCION .TRIM()
+    const textarea = document.getElementById(`respuesta-${idComentario}`);
+    const texto = textarea.value.trim();
     
+    // VALIDAR QUE EL TEXTO CONTENGA CARACTERES VALIDOS USANDO LA FUNCION .TRIM()
+    if (texto === "") {
+        alert("Por favor escribe una respuesta");
+        return;
+    }
     // CREAR EL OBJETO JSON CON LOS DATOS INDICADOS EN EL EXAMEN
-
+    const datos = {
+        comentario: texto,
+        idComentario: idComentario,
+        idPublicacion: idPublicacion
+    };
     // USAR LA FUNCION FETCH PARA ENVIAR LOS DATOS A LA RUTA '/publicarRespuestaComentario/'
-
+    fetch('/publicarRespuestaComentario/', {
+        method: 'POST',
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(datos)
+    })
     // AL RECIBIR LA RESPUESTA DEL SERVIDOR LIMPIAR EL AREA DE TEXTO DE RESPUESTA AL COMENTARIO Y LLAMAR A LA FUNCION
     // cargarPub PASANDO COMO PARAMETRO EL ID DE LA PUBLICACION (idPublicacion)
-
+    
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'ok') {
+            textarea.value = '';
+            cargarPub(idPublicacion);
+        }
+    });
 }

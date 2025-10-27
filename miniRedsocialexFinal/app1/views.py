@@ -269,5 +269,21 @@ def publicarRespuestaComentario(request):
         CREAR EL NUEVO OBJETO COMENTARIO CON EL ATRIBUTO RESPUESTA_A CONFIGURADO ADECUADAMENTE
         """
 
+        # datosComentario = json.loads(request.body.decode('utf-8'))
+
+        # comentarioTexto = datosComentario.get('comentario')
+        # idPublicacion = datosComentario.get('idPublicacion')
+        # idComentarioPadre = datosComentario.get('idComentario')
+
+        # objPublicacion = publicacion.objects.get(id=idPublicacion)
+        # objComentarioPadre = comentario.objects.get(id=idComentarioPadre)
+
+        # comentario.objects.create(
+        #     descripcion=comentarioTexto,
+        #     pubRel = objPublicacion,
+        #     autoCom = request.user,
+        #     respuesta_a = objComentarioPadre
+        # )
+
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'error': 'Petición inválida'}, status=400)
